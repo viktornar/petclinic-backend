@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UsersRepository extends CrudRepository<User, Long> { ;
-    public User findByUsername(String username);
-    public List<User> findAllByUsername(String username);
-    public List<User> findAllByPassword(String password);
-    public User findByUsernameAndPassword(String username, String password);
+    Optional<User> findByUsername(String username);
+    List<User> findAllByUsername(String username);
+    List<User> findAllByPassword(String password);
+    User findByUsernameAndPassword(String username, String password);
 }

@@ -1,9 +1,8 @@
 package com.viktornar.github.petclinic.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.ScriptAssert;
 
@@ -13,11 +12,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
 @Data
+@Table(name = "users")
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @ScriptAssert(
         lang = "javascript",
         script="_this.passwordConfirm === _this.password",
@@ -35,14 +35,18 @@ public class User extends BaseEntity {
 
     @Transient
     @NotBlank
-    @Length(min=4, max = 6)
+    @Length(min = 4, max = 10)
     private String passwordConfirm;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name="role_id")
+    @ManyToMany(
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL
     )
+    @JoinTable(
+        name = "user_role", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    @JsonDeserialize
     private Set<Role> roles = new HashSet<>();
 }
