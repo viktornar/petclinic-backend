@@ -33,7 +33,7 @@ public class VisitsRestController  extends ApiRestController{
             throw new PetNotFoundException(String.format("Pet with id %s not found", petId));
         }
 
-        Visit visit = visitsRepository.findById(visitId)
+        Visit visit = visitsRepository.findByIdAndPetId(visitId, petId)
                 .orElseThrow(() -> new VisitNotFoundException(String.format("Visit with id %s not found", visitId)));
 
         return Collections.singletonList(visit);
@@ -55,7 +55,7 @@ public class VisitsRestController  extends ApiRestController{
             throw new PetNotFoundException(String.format("Pet with id %s not found", petId));
         }
 
-        Visit visitToUpdate = visitsRepository.findById(visitId)
+        Visit visitToUpdate = visitsRepository.findByIdAndPetId(visitId, petId)
                 .orElseThrow(() -> new VisitNotFoundException(String.format("Visit with id %s not found", visitId)));
 
         BeanUtils.copyProperties(visitToUpdate, visit);

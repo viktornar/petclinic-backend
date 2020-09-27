@@ -29,7 +29,7 @@ public class Visit extends BaseEntity {
     @NotEmpty
     private String description;
 
-    @Column(name = "pet_id")
+    @Column
     @NotNull
     private Long petId;
 }
