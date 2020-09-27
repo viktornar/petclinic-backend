@@ -5,34 +5,31 @@
 --   DEFAULT COLLATE utf8_general_ci;
 
 -- GRANT ALL PRIVILEGES ON petclinic.* TO user@localhost IDENTIFIED BY 'user';
-USE petclinic;
+use petclinic;
+
+create table if not exists users
+(
+    id bigint not null auto_increment primary key,
+    username varchar(255) null,
+    password varchar(255) null
+) engine = InnoDB;
 
 create table if not exists roles
 (
-    id   bigint auto_increment
-        primary key,
+    id bigint not null auto_increment primary key,
     name enum ('ADMIN', 'EDITOR', 'USER', 'ANONYMOUS') not null
-) engine = MyISAM;
+) engine = InnoDB;
 
 create table if not exists user_role
 (
     user_id bigint not null,
     role_id bigint not null,
-    primary key (user_id, role_id)
-) engine = MyISAM;
-
-create index if not exists FKt7e7djp752sqn6w22i6ocqy6q
-    on user_role (role_id);
-
-create table if not exists users
-(
-    id       bigint auto_increment
-        primary key,
-    password varchar(6)   null,
-    username varchar(255) null,
-    constraint UK_r43af9ap4edm43mmtq01oddj6
-        unique (username)
-) engine = MyISAM;
+    primary key (user_id, role_id),
+    constraint FK_user_role_users
+        foreign key (user_id) references users (id),
+    constraint FK_user_role_roles
+        foreign key (role_id) references roles (id)
+) engine = InnoDB;
 
 
 create table if not exists owners
@@ -44,7 +41,7 @@ create table if not exists owners
     city       varchar(255) null,
     phone      varchar(255) null,
     index(last_name)
-) engine = MyISAM;
+) engine = InnoDB;
 
 create table if not exists pets
 (
@@ -52,11 +49,9 @@ create table if not exists pets
     birth_date date                                               null,
     kind       enum ('CAT', 'DOG', 'FISH', 'REPTILES', 'UNKNOWN') not null,
     name       varchar(255)                                       null,
-    owner_id   bigint                                             null
-) engine = MyISAM;
-
-create index if not exists FK6teg4kcjcnjhduguft56wcfoa
-    on pets (owner_id);
+    owner_id   bigint null,
+    FOREIGN KEY (owner_id) REFERENCES owners(id)
+) engine = InnoDB;
 
 create table if not exists visits
 (
@@ -64,8 +59,6 @@ create table if not exists visits
         primary key,
     description varchar(255) null,
     pet_id      bigint       not null,
-    visit_date  date         null
-) engine = MyISAM;
-
-create index if not exists FK6jcifhlqqlsfseu67utlouauy
-    on visits (pet_id);
+    visit_date  date         null,
+    FOREIGN KEY (pet_id) REFERENCES pets(id)
+) engine = InnoDB;
