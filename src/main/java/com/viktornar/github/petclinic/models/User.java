@@ -30,13 +30,13 @@ public class User extends BaseEntity {
 
     @Column
     @NotBlank
-    @Length(min=4, max = 6)
+    @Length(min=4)
     @JsonIgnore
     private String password;
 
     @Transient
     @NotBlank
-    @Length(min = 4, max = 10)
+    @Length(min = 4)
     @JsonIgnore
     private String passwordConfirm;
 

@@ -40,13 +40,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "js", "css").permitAll()
+                .antMatchers("/", "js", "/register", "css").permitAll()
                 .antMatchers("/api/users").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()
                 .and()
                 .logout().permitAll().invalidateHttpSession(true).clearAuthentication(true)
-                .and().csrf();
+                .and().csrf().disable();
     }
 }
