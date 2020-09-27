@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface OwnersRepository extends CrudRepository<Owner, Long> {
     List<Owner> findAll();
-
-    @Query("SELECT owner FROM Owner owner left join fetch owner.pets WHERE owner.id =:id")
+    
     @Transactional(readOnly = true)
+    @Query("SELECT owner FROM Owner owner left join fetch owner.pets WHERE owner.id =:id")
     Optional<Owner> findByIdWithPets(@Param("id") Long id);
 }

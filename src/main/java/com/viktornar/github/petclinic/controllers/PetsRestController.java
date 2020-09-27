@@ -8,12 +8,10 @@ import com.viktornar.github.petclinic.repositories.OwnersRepository;
 import com.viktornar.github.petclinic.repositories.PetsRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PetsRestController extends ApiRestController {
     private final OwnersRepository ownersRepository;
-    private final PetsRepository petsRespository;
+    private final PetsRepository petsRepository;
 
     @GetMapping("/owners/{ownerId}/pets")
     List<Pet> getPets(@PathVariable Long ownerId) throws OwnerNotFoundException {
@@ -34,11 +32,7 @@ public class PetsRestController extends ApiRestController {
     @GetMapping("/owners/{ownerId}/pets/{petId}")
     List<Pet> getPet(@PathVariable Long ownerId, @PathVariable Long petId)
             throws OwnerNotFoundException, PetNotFoundException {
-        
-        ownersRepository.findById(ownerId)
-                .orElseThrow(() -> new OwnerNotFoundException(String.format("Owner with id %s not found", ownerId)));
-        
-        Pet pet = petsRespository.findById(petId)
+        Pet pet = petsRepository.findByIdAndOwnerId(petId, ownerId)
                 .orElseThrow(() -> new PetNotFoundException(String.format("Pet with id %s not found", petId)));
 
         return Collections.singletonList(pet);
@@ -48,9 +42,10 @@ public class PetsRestController extends ApiRestController {
     List<Pet> postPet(@PathVariable Long ownerId, @RequestBody Pet pet) throws OwnerNotFoundException {
         Owner owner = ownersRepository.findById(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(String.format("Owner with id %s not found", ownerId)));
+
         pet.setOwner(owner);
 
-        return Collections.singletonList(petsRespository.save(pet));
+        return Collections.singletonList(petsRepository.save(pet));
     }
 
     @PutMapping("/owners/{ownerId}/pets/{petId}")
@@ -59,7 +54,7 @@ public class PetsRestController extends ApiRestController {
         Owner owner = ownersRepository.findById(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(String.format("Owner with id %s not found", ownerId)));
 
-        Pet petToUpdate = petsRespository.findById(petId)
+        Pet petToUpdate = petsRepository.findByIdAndOwnerId(petId, ownerId)
                 .orElseThrow(() -> new PetNotFoundException(String.format("Pet with id %s not found", petId)));
 
         BeanUtils.copyProperties(petToUpdate, pet);
@@ -67,19 +62,16 @@ public class PetsRestController extends ApiRestController {
         petToUpdate.setId(petId);
         petToUpdate.setOwner(owner);
 
-        return Collections.singletonList(petsRespository.save(petToUpdate));
+        return Collections.singletonList(petsRepository.save(petToUpdate));
     }
 
     @DeleteMapping("/owners/{ownerId}/pets/{petId}")
     List<Pet> deletePet(@PathVariable Long ownerId, @PathVariable Long petId) throws OwnerNotFoundException,
             PetNotFoundException {
-        ownersRepository.findById(ownerId)
-                .orElseThrow(() -> new OwnerNotFoundException(String.format("Owner with id %s not found", ownerId)));
-
-        petsRespository.findById(petId)
+        petsRepository.findByIdAndOwnerId(petId, ownerId)
                 .orElseThrow(() -> new PetNotFoundException(String.format("Pet with id %s not found", petId)));
         
-        petsRespository.deleteById(petId);
+        petsRepository.deleteById(petId);
         return new ArrayList<Pet>();
     }
 }
