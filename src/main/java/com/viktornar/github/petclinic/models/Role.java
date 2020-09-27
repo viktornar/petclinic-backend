@@ -1,5 +1,6 @@
 package com.viktornar.github.petclinic.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -7,6 +8,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "roles")
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role extends BaseEntity {
@@ -16,13 +19,10 @@ public class Role extends BaseEntity {
       columnDefinition = "ENUM('ADMIN','EDITOR', 'USER', 'ANONYMOUS')",
       nullable = false
     )
-    @Getter
-    @Setter
     private RoleName name;
 
     @ManyToMany(mappedBy = "roles")
-    @Getter
-    @Setter
+    @JsonBackReference
     private Set<User> users;
 
     public enum RoleName {

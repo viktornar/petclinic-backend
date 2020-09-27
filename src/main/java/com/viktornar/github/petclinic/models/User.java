@@ -1,6 +1,7 @@
 package com.viktornar.github.petclinic.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -14,10 +15,9 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = "roles")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @ScriptAssert(
         lang = "javascript",
         script="_this.passwordConfirm === _this.password",
@@ -31,11 +31,13 @@ public class User extends BaseEntity {
     @Column
     @NotBlank
     @Length(min=4, max = 6)
+    @JsonIgnore
     private String password;
 
     @Transient
     @NotBlank
     @Length(min = 4, max = 10)
+    @JsonIgnore
     private String passwordConfirm;
 
     @ManyToMany(
@@ -47,6 +49,6 @@ public class User extends BaseEntity {
         joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @JsonDeserialize
+    @JsonManagedReference
     private Set<Role> roles = new HashSet<>();
 }
