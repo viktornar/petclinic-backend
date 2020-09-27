@@ -6,6 +6,7 @@ import com.viktornar.github.petclinic.repositories.OwnersRepository;
 import com.viktornar.github.petclinic.utils.CustomBeanUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,12 @@ public class OwnersRestController extends ApiRestController {
     @GetMapping("/owners")
     List<Owner> getOwners() {
         return ownersRepository.findAll();
+    }
+
+    @ExceptionHandler({OwnerNotFoundException.class})
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    String getError() {
+        return "Error occurred";
     }
 
     @GetMapping("/owners/{id}")
