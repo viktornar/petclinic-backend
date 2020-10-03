@@ -31,7 +31,7 @@ public class AuthController extends ApiRestController {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return new JwtResponse(token);
+        return new JwtResponse(token, userDetails.getUsername(), userDetails.getPassword());
     }
 
     private void authenticate(String username, String password) throws Exception {

@@ -7,6 +7,7 @@
 -- GRANT ALL PRIVILEGES ON petclinic.* TO user@localhost IDENTIFIED BY 'user';
 use petclinic;
 
+-- TODO: Make user unique
 create table if not exists users
 (
     id bigint not null auto_increment primary key,
